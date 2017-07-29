@@ -4,8 +4,9 @@ var limit = 60 * 1,
     duration = 750,
     now = new Date(Date.now() - duration);
 
-var width = document.getElementById('graphdata1').clientWidth,
-// var width = 400;
+var timeoutId = 0;
+// var width = document.getElementById('graphdata1').clientWidth,
+var width = 400;
     height = 250;
 
 var groups = {
@@ -32,37 +33,41 @@ var groups = {
     }
 }
 
-var ws = new WebSocket("ws://192.168.1.100:8888/realtime");
-ws.onopen = function(){
-    console.log("Connection Established");
-};
+// var ws = new WebSocket("ws://192.168.1.100:8888/realtime");
+// ws.onopen = function(){
+//     console.log("Connection Established");
+// };
 
-ws.onmessage = function(ev){
-    console.log("Got a message!");
-    var json_data = JSON.parse(ev.data);
-    console.log(json_data);
-    cpu_load.innerHTML = "CPU Load: " + parseInt(json_data.cpu_load) + " %";
-    mem_percent.innerHTML = "RAM Percent: " + parseFloat(json_data.mem_percent) + " %";
-    storage_root.innerHTML = "Total Storage Used: " + parseFloat(json_data.storage_root) + " %";
-    groups['cpu_load'].value = parseInt(json_data.cpu_load);
-    groups['mem_load'].value = parseInt(json_data.mem_percent);
-    groups['storage_load'].value = parseInt(json_data.storage_root);
-    }
-    setTimeout(function(){
-        for (var name in groups){
-           var group = groups[name];
-           group.value = 0;
-        }
-    }, 10000);
-};
+function getRandomArbitrary(min, max) {
+  return Math.round (Math.random() * (max - min) + min) -1;
+}
 
-ws.onclose = function(ev){
-    console.log("connection was closed");
-};
+// ws.onmessage = function(ev){
+//     console.log("Got a message!");
+//     var json_data = JSON.parse(ev.data);
+//     console.log(json_data);
+//     cpu_load.innerHTML = "CPU Load: " + parseInt(json_data.cpu_load) + " %";
+//     mem_percent.innerHTML = "RAM Percent: " + parseFloat(json_data.mem_percent) + " %";
+//     storage_root.innerHTML = "Total Storage Used: " + parseFloat(json_data.storage_root) + " %";
+//     groups['cpu_load'].value = parseInt(json_data.cpu_load);
+//     groups['mem_load'].value = parseInt(json_data.mem_percent);
+//     groups['storage_load'].value = parseInt(json_data.storage_root);
+//     }
+//     setTimeout(function(){
+//         for (var name in groups){
+//            var group = groups[name];
+//            group["value"] = 0;
+//         }
+//     }, 10000);
+// };
 
-ws.onerror = function(ev){
-    console.log("Error creating socket setup");
-};
+// ws.onclose = function(ev){
+//     console.log("connection was closed");
+// };
+//
+// ws.onerror = function(ev){
+//     console.log("Error creating socket setup");
+// };
 
 var x = d3.time.scale()
     .domain([now - (limit - 2), now - duration])
@@ -122,7 +127,8 @@ function createGraph() {
     // Add new values
     for (var name in groups) {
         var group = groups[name];
-        group.data.push(group.value);
+        // group.data.push(group.value);
+        group.data.push(getRandomArbitrary(0,101));
         group.path.attr('d', line);
     }
 
